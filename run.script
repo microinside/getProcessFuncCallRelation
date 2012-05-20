@@ -1,0 +1,4 @@
+#!/bin/bash
+
+make
+/home/e/pin/pin -t Obj/getProcessFuncCallRelation.so -- test
