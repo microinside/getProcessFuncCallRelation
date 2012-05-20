@@ -5,3 +5,8 @@ ver 1.0
 ver 1.1
 添加README说明;
 更改Makefile;
+
+ver 2.0
+修正Makefile;
+添加调用函数时间;
+修正client的re文件匹配

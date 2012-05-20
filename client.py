@@ -6,7 +6,7 @@ Created on 2012-3-21
 import socket
 import os
 import time
-
+import re
 
 def send2server( filename, serverIP, serverPort ):
     client = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
@@ -37,7 +37,11 @@ def logClient():
 
     while True:
         files = os.listdir( destDir )
-        files.remove( exceptFile )
+        pattern = re.compile(r'axiba.log.\d+')
+        for i in files:
+		    match = pattern.match(i)
+		    if None == match:
+				files.remove(i)
         
         filesTmp = []
         for i in files:

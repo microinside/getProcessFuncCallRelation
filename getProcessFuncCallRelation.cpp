@@ -39,6 +39,7 @@
 
 #include <stack>
 #include <sstream>
+#include <ctime>
 
 /*----------------------------------------------*
  * 常量定义                                     *
@@ -168,15 +169,17 @@ void CallStack::addFunc(const char* funcName, ADDRINT funcAddr,
     if(MAX_LINES <= _logLines)
     {
         out2logFiles ();
-        
+
         delete _pLogStream;
         _pLogStream = new ostringstream();
     }
 
+    time_t nowTime = time(NULL);
+    string nowTimeStr = ctime(&nowTime);
     //output
-    _outFile << funcName << "{//" << funcAddr << ", " << upperFuncBP
+    _outFile << funcName << "{//" << funcAddr << ", " << nowTimeStr
              << std::endl;
-    (*_pLogStream) << funcName << "{//" << funcAddr << ", " << upperFuncBP
+    (*_pLogStream) << funcName << "{//" << funcAddr << ", " << nowTimeStr
                    << std::endl;
     ++ _logLines;
 
@@ -193,7 +196,7 @@ void CallStack::out2logFiles()
     //输出到上传日志文件, 以--结尾的表示程序未终止
     splitFile << (*_pLogStream).str();
     splitFile.close();
-    
+
     ++ _logFileNum;
     _logLines = 0;
 }
@@ -270,7 +273,7 @@ VOID traceBack( ADDRINT funcCurSP, ADDRINT funcUpperBP )
         PIN_LockClient();
         funcAddr = RTN_Address(RTN_FindByAddress(tmpAddr));
         PIN_UnlockClient();
-       
+
         while(0 != funcUpperBP)
         {
             tmpFuncs.push(FuncItem(funcName, funcAddr, funcUpperBP));
@@ -288,7 +291,7 @@ VOID traceBack( ADDRINT funcCurSP, ADDRINT funcUpperBP )
 
             funcUpperBP = *(ADDRINT*) funcUpperBP;
         }
-    
+
 #endif
 
 #if 1
