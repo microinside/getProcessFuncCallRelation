@@ -1,27 +1,125 @@
+/******************************************************************************
+
+                  版权所有 (C), 2001-2011, 志长有限公司
+
+ ******************************************************************************
+  文 件 名   : CallStack.cpp
+  版 本 号   : 初稿
+  作    者   : @zhi
+  生成日期   : 2012年5月21日
+  最近修改   :
+  功能描述   : CallStack函数定义文件
+  函数列表   :
+              CallStack.addFunc
+              CallStack.CallStack
+              CallStack.clearStack
+              CallStack.out2logFiles
+              CallStack.~CallStack
+  修改历史   :
+  1.日    期   : 2012年5月21日
+    作    者   : @zhi
+    修改内容   : 创建文件
+
+******************************************************************************/
+
+/*----------------------------------------------*
+ * 包含头文件                                   *
+ *----------------------------------------------*/
 #include <ctime>
 #include "CallStack.h"
 
+/*----------------------------------------------*
+ * 外部变量说明                                 *
+ *----------------------------------------------*/
+
+/*----------------------------------------------*
+ * 外部函数原型说明                             *
+ *----------------------------------------------*/
+
+/*----------------------------------------------*
+ * 内部函数原型说明                             *
+ *----------------------------------------------*/
+
+/*----------------------------------------------*
+ * 全局变量                                     *
+ *----------------------------------------------*/
+
+/*----------------------------------------------*
+ * 模块级变量                                   *
+ *----------------------------------------------*/
+
+/*----------------------------------------------*
+ * 常量定义                                     *
+ *----------------------------------------------*/
 const unsigned long MAX_LINES = 5;
 
-//打开记录文件, 设置输出数据为16进制格式
+/*----------------------------------------------*
+ * 宏定义                                       *
+ *----------------------------------------------*/
+
+/*****************************************************************************
+ 函 数 名  : CallStack.CallStack
+ 功能描述  : 打开记录文件, 设置数据输出为16进制
+ 输入参数  : string outFileName
+ 输出参数  : 无
+ 返 回 值  :
+ 调用函数  :
+ 被调函数  :
+
+ 修改历史      :
+  1.日    期   : 2012年5月21日
+    作    者   : @zhi
+    修改内容   : 新生成函数
+
+*****************************************************************************/
 CallStack::CallStack(string outFileName):_outFileName(outFileName)
 {
-    //open(const char*, std::ios_base::openmode)
     _outFile.open(_outFileName.c_str());
-    //! 判断打开成功
+    //判断打开失败
+    if ( _outFile.fail())
+    {
+        std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+                << ", open log file failed" << std::endl;
+        return;
+    }
     _outFile << hex;
 
     _outTestFile.open(("test_"+_outFileName).c_str());
-    //! 判断打开成功
+    if ( _outTestFile.fail())
+    {
+        std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+                << ", open test log file failed" << std::endl;
+        return;
+    }
     _outTestFile << hex;
 
     _pLogStream= new ostringstream();
+    if ( NULL == _pLogStream )
+    {
+        std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+                << ", new string stream failed" << std::endl;
+        return;
+    }
     (*_pLogStream) << hex;
     _logLines = 0;
     _logFileNum = 0;
 }
 
-//清空函数调用关系栈, 关闭记录文件
+/*****************************************************************************
+ 函 数 名  : CallStack.~CallStack
+ 功能描述  : 清空函数调用关系栈, 关闭记录文件
+ 输入参数  : 无
+ 输出参数  : 无
+ 返 回 值  :
+ 调用函数  :
+ 被调函数  :
+
+ 修改历史      :
+  1.日    期   : 2012年4月21日
+    作    者   : @zhi
+    修改内容   : 新生成函数
+
+*****************************************************************************/
 CallStack::~CallStack()
 {
     clearStack();
@@ -35,7 +133,21 @@ CallStack::~CallStack()
     _pLogStream = NULL;
 }
 
-//清空函数调用关系栈, 打印相关信息
+/*****************************************************************************
+ 函 数 名  : CallStack.clearStack
+ 功能描述  : 清空函数调用关系栈, 打印相关信息
+ 输入参数  : 无
+ 输出参数  : 无
+ 返 回 值  : void
+ 调用函数  :
+ 被调函数  :
+
+ 修改历史      :
+  1.日    期   : 2012年4月21日
+    作    者   : @zhi
+    修改内容   : 新生成函数
+
+*****************************************************************************/
 void CallStack::clearStack()
 {
     while(!_funcs.empty())
@@ -47,7 +159,24 @@ void CallStack::clearStack()
     }
 }
 
-//添加一个函数调用进栈, 通过比较主调当前函数的函数的EBP控制出栈, 输出相关信息
+/*****************************************************************************
+ 函 数 名  : CallStack.addFunc
+ 功能描述  : 添加一个函数调用入栈, 通过比较调用当前函数的函数的EBP控制栈内数
+             据
+ 输入参数  : const char* funcName
+             ADDRINT funcAddr
+             ADDRINT upperFuncBP
+ 输出参数  : 无
+ 返 回 值  : void
+ 调用函数  :
+ 被调函数  :
+
+ 修改历史      :
+  1.日    期   : 2012年4月21日
+    作    者   : @zhi
+    修改内容   : 新生成函数
+
+*****************************************************************************/
 void CallStack::addFunc(const char* funcName, ADDRINT funcAddr,
                         ADDRINT upperFuncBP)
 {
@@ -75,6 +204,12 @@ void CallStack::addFunc(const char* funcName, ADDRINT funcAddr,
 
         delete _pLogStream;
         _pLogStream = new ostringstream();
+        if ( NULL == _pLogStream )
+        {
+            std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+                    << ", new string stream failed" << std::endl;
+            return;
+        }
     }
 
     time_t nowTime = time(NULL);
@@ -88,7 +223,21 @@ void CallStack::addFunc(const char* funcName, ADDRINT funcAddr,
 
     _funcs.push(FuncItem(funcName, funcAddr, upperFuncBP));
 }
+/*****************************************************************************
+ 函 数 名  : CallStack.out2logFiles
+ 功能描述  : 分拆日志到临时待上传子文件
+ 输入参数  : 无
+ 输出参数  : 无
+ 返 回 值  : void
+ 调用函数  :
+ 被调函数  :
 
+ 修改历史      :
+  1.日    期   : 2012年4月21日
+    作    者   : @zhi
+    修改内容   : 新生成函数
+
+*****************************************************************************/
 void CallStack::out2logFiles()
 {
     ostringstream osstream;
@@ -96,6 +245,12 @@ void CallStack::out2logFiles()
 
     ofstream splitFile;
     splitFile.open(osstream.str().c_str());
+    if ( splitFile.fail())
+    {
+        std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+                << ", open split log file failed" << std::endl;
+        return;
+    }
     //输出到上传日志文件, 以--结尾的表示程序未终止
     splitFile << (*_pLogStream).str();
     splitFile.close();

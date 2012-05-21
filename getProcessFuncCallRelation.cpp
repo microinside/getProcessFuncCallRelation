@@ -234,6 +234,6 @@ VOID finish(INT32 code, VOID * v)
 *****************************************************************************/
 INT32 usage()
 {
-    cerr << "init pin tools failed.." << std::endl;
+    std::cerr << "init pin tools failed.." << std::endl;
     return -1;
 }
