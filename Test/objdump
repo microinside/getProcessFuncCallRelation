@@ -1,5 +1,0 @@
-#!/bin/bash
-
-OBJ="test"
-
-objdump -dS $OBJ > $OBJ.txt
