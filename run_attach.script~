@@ -1,0 +1,14 @@
+#!/bin/bash
+
+LOG="Log/axiba.log"
+PROCESS_DIR="/home/e/getProcessFuncCallRelation/Test"
+PROCESS="test"
+
+##########################
+make
+#########################
+cd $PROCESS_DIR
+make
+./$PROCESS
+#######################
+indent -linux $LOG

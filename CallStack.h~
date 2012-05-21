@@ -10,7 +10,7 @@
 #define __CALLSTACK_H__
 
 
-const string LOG_NAME = "/home/e/getProcessFuncCallRelation/Log/axiba.log";
+const string LOG_NAME = "/home/e/Log/axiba.log";
 
 /*------------------------------------------------------------*
  *º¯Êý¼ÇÂ¼Àà--------------------------------------------------*

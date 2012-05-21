@@ -4,7 +4,7 @@
 #变量使用可以{}，不能Makefile的()
 ############################################
 PIN="/home/e/pin/pin"
-LOG="/home/e/getProcessFuncCallRelation/Log/axiba.log"
+LOG="Log/axiba.log"
 
 MY_SO="/home/e/getProcessFuncCallRelation/Obj/Main.so"
 
