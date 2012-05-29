@@ -43,7 +43,8 @@ const string EXCEPT_SEC = "/lib/";
 /*----------------------------------------------*
  * 全局变量                                     *
  *----------------------------------------------*/
-CallStack g_callStack;
+CallStack& g_callStack = CallStackFactory::getCallStack();
+//CallStack g_callStack;
 bool g_backTraceFlg = true;
 
 /*----------------------------------------------*
@@ -112,12 +113,13 @@ VOID traceBack( ADDRINT funcCurSP, ADDRINT funcUpperBP )
         PIN_LockClient();
         funcAddr = RTN_Address(RTN_FindByAddress(tmpAddr));
         PIN_UnlockClient();
+        ADDRINT funcBP = funcUpperBP;
 
-        while(0 != funcUpperBP)
+        while(0 != funcBP)
         {
-            tmpFuncs.push(FuncItem(funcName, funcAddr, funcUpperBP));
+            tmpFuncs.push(FuncItem(funcName, funcAddr, funcBP));
 
-            tmpAddr = *((ADDRINT *)funcUpperBP + 1);
+            tmpAddr = *((ADDRINT *)funcBP + 1);
             funcName = RTN_FindNameByAddress(tmpAddr);
             //获取不到函数名
             if("" == funcName)
@@ -128,7 +130,7 @@ VOID traceBack( ADDRINT funcCurSP, ADDRINT funcUpperBP )
             funcAddr = RTN_Address(RTN_FindByAddress(tmpAddr));
             PIN_UnlockClient();
 
-            funcUpperBP = *(ADDRINT*) funcUpperBP;
+            funcBP = *(ADDRINT*) funcBP;
         }
 
 #endif
@@ -137,8 +139,8 @@ VOID traceBack( ADDRINT funcCurSP, ADDRINT funcUpperBP )
         tmpAddr =0;
         while(!tmpFuncs.empty())
         {
-            funcPackage(tmpFuncs.top().funcName.c_str(), tmpFuncs.top().
-                        funcAddr, tmpAddr);
+            funcPackage(tmpFuncs.top().funcName.c_str(),
+                tmpFuncs.top().funcAddr, tmpAddr);
 
             tmpAddr = tmpFuncs.top().upperFuncBP;
             tmpFuncs.pop();
@@ -214,7 +216,8 @@ VOID rtn(RTN rtn, VOID * v)
 *****************************************************************************/
 VOID finish(INT32 code, VOID * v)
 {
-    g_callStack.~CallStack();
+	CallStackFactory::delCallStack();
+ // g_callStack.~CallStack();
 }
 
 /*****************************************************************************

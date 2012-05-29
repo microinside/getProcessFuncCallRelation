@@ -5,20 +5,16 @@
 ############################################
 PIN="/home/e/pin/pin"
 LOG="/home/e/getProcessFuncCallRelation/Log/axiba.log"
-
 MY_SO="/home/e/getProcessFuncCallRelation/Obj/Main.so"
-
 PROCESS_DIR="/home/e/getProcessFuncCallRelation/Test"
-PROCESS=${PROCESS_DIR}"/test"
+PROCESS=${PROCESS_DIR}"/test.o"
+PROCESS_="/usr/bin/firefox"
 
-######################################
 make
-##########################################
+
 cd $PROCESS_DIR
 make
-####################################
-$PIN -t $MY_SO -- $PROCESS
-#################################
+
+$PIN -t $MY_SO -- $PROCESS_
+
 indent -linux $LOG
-######################################
-#/home/e/pin/pin -t /home/e/pin/source/tools/ManualExamples/obj-ia32/inscount0.so -- /home/e/pin/source/tools/ManualExamples/obj-ia32/test

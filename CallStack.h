@@ -54,7 +54,7 @@
 #ifndef __CALLSTACK_H__
 #define __CALLSTACK_H__
 
-using namespace std;
+//using namespace std;
 /*----------------------------------------------*
  * 常量定义                                     *
  *----------------------------------------------*/
@@ -132,5 +132,27 @@ public:
         return _outTestFile;
     }
 };
+
+class CallStackFactory
+{
+public:
+  static CallStack* pCallStack;
+static CallStack& getCallStack()
+{
+  pCallStack = new CallStack();
+  return *pCallStack;
+}
+static void delCallStack()
+{
+  if(NULL != pCallStack)
+  {
+    delete pCallStack;
+    pCallStack = NULL;
+  }
+}
+	//static CallStack& getCallStack();
+	//static void delCallStack();
+};
+CallStack* CallStackFactory::pCallStack = NULL;
 
 #endif /* __CALLSTACK_H__ */

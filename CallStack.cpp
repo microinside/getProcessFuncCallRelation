@@ -78,16 +78,16 @@ CallStack::CallStack(string outFileName):_outFileName(outFileName)
     //ÅÐ¶Ï´ò¿ªÊ§°Ü
     if ( _outFile.fail())
     {
-        std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+        std::cerr << "file:" << __FILE__<< ", line:" << __LINE__
                 << ", open log file failed" << std::endl;
         return;
     }
     _outFile << hex;
 
-    _outTestFile.open(("test_"+_outFileName).c_str());
+    _outTestFile.open((_outFileName+".test").c_str());
     if ( _outTestFile.fail())
     {
-        std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+        std::cerr << "file:" << __FILE__<< ", line:" << __LINE__
                 << ", open test log file failed" << std::endl;
         return;
     }
@@ -96,7 +96,7 @@ CallStack::CallStack(string outFileName):_outFileName(outFileName)
     _pLogStream= new ostringstream();
     if ( NULL == _pLogStream )
     {
-        std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+        std::cerr << "file:" << __FILE__<< ", line:" << __LINE__
                 << ", new string stream failed" << std::endl;
         return;
     }
@@ -206,7 +206,7 @@ void CallStack::addFunc(const char* funcName, ADDRINT funcAddr,
         _pLogStream = new ostringstream();
         if ( NULL == _pLogStream )
         {
-            std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+            std::cerr << "file:" << __FILE__<< ", line:" << __LINE__
                     << ", new string stream failed" << std::endl;
             return;
         }
@@ -247,7 +247,7 @@ void CallStack::out2logFiles()
     splitFile.open(osstream.str().c_str());
     if ( splitFile.fail())
     {
-        std::cerr << "file:" << __FILE__<< ", line" << __LINE__
+        std::cerr << "file:" << __FILE__<< ", line:" << __LINE__
                 << ", open split log file failed" << std::endl;
         return;
     }
@@ -258,4 +258,21 @@ void CallStack::out2logFiles()
     ++ _logFileNum;
     _logLines = 0;
 }
+
+/*
+static CallStack* CallStackFactory::pCallStack = NULL;
+static CallStack& CallStackFactory::getCallStack()
+{
+	pCallStack = new CallStack();
+	return *pCallStack;
+}
+static void CallStackFactory::delCallStack()
+{
+	if(NULL != pCallStack)
+	{
+		delete pCallStack;
+		pCallStack = NULL;
+	}
+}
+*/
 

@@ -8,10 +8,18 @@ import os
 import time
 import re
 
-def send2server( filename, serverIP, serverPort ):
+def send2server( filename, serverIP, serverPort, destDir ):
     client = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
     client.connect( ( serverIP, serverPort ) )
-    
+
+    indexFromServer = client.recv(1024)
+    global indexInServer
+    if "" == indexInServer:
+        indexInServer = indexFromServer
+        fp = open( destDir + "flg_" + indexInServer, "w" )
+        fp.close()
+    client.send( indexInServer )
+
     fp = open( filename )
     buf = fp.read()
     client.send( buf )
@@ -21,8 +29,7 @@ def send2server( filename, serverIP, serverPort ):
     client.send( "end-socket-connect" )
     client.close()
 
-    print buf
-    if buf.endswith( "/*The end*/\n" ):
+    if buf.endswith( "/*The end*/" ):
         print "the end"
         return True
     return False
@@ -35,14 +42,18 @@ def logClient():
     serverIP = 'localhost'
     serverPort = 8001
 
+    global indexInServer
+    indexInServer = ""
+
     while True:
         files = os.listdir( destDir )
-        pattern = re.compile(r'axiba.log.\d+')
+        patternLog = re.compile(r'axiba.log.\d+')
+        filesTmp = []
         for i in files:
-		    match = pattern.match(i)
-		    if None == match:
-				files.remove(i)
-        
+            if patternLog.match(i):
+                filesTmp.append(i)
+        files = filesTmp
+
         filesTmp = []
         for i in files:
             tmp = i.split(".")[-1]
@@ -53,13 +64,17 @@ def logClient():
         for i in filesTmp:
             tmp = destDir + exceptFile + "." + str(i)
             files.append(tmp)
+
+        print "get to send files:", files
                             
         bRet = False
         for i in files:
-            bRet = send2server( i, serverIP, serverPort )
+            bRet = send2server( i, serverIP, serverPort, destDir )
         if bRet:
+            print "client to be teminaled"
             break
 
+        print "client go to sleep"
         time.sleep( seconds )
 
 if __name__ == "__main__":

@@ -1,27 +1,1 @@
-import socket
-
-def logServer():
-    serverIP = 'localhost'
-    serverPort = 8001
-    maxConnection = 5
-
-    server = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-    server.bind( ( serverIP, serverPort ) )
-    server.listen( maxConnection )
-
-    while True:
-        connection, address = server.accept()
-
-        fp = open( "Log/" + address[0] + ".log", "a+" )
-        while True:
-            buf = connection.recv( 1024 )
-            if "end-socket-connect" == buf:
-                print "S:end-socket-connect"
-                break
-            fp.write( buf )
-        fp.close()
-
-        connection.close()
-        
-if __name__ == '__main__':
-    logServer()
+import socketdef logServer():    serverIP = 'localhost'    serverPort = 8001    maxConnection = 5    server = socket.socket( socket.AF_INET, socket.SOCK_STREAM )    server.bind( ( serverIP, serverPort ) )    server.listen( maxConnection )    nextClientNum = 0    while True:        connection, address = server.accept()        print "connection from ", connection, address        connection.send(str(nextClientNum))        logName=connection.recv(1024)        logFullName = "Log_Server/" + logName + ".log"        if logName == str(nextClientNum):            print "create and write file:", logFullName            fp = open( logFullName, "w" )            nextClientNum+=1        else:            print "write file:", logFullName            fp = open( logFullName, "a+" )        while True:            buf = connection.recv( 1024 )            if "end-socket-connect" == buf:                print "S:end-socket-connect"                break            fp.write( buf )        fp.close()        print "stop write file:", logFullName        connection.close()        if __name__ == '__main__':    logServer()
